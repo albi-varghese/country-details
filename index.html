@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .container {
+      text-align: center;
+      width: 60%;
+    }
+    input {
+      padding: 10px;
+      width: 50%;
+      border: none;
+      outline: none;
+      border-radius: 5px;
+      text-align: center;
+      background-color: lightblue;
+      font-size: 1.2rem;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .details {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      text-align: left;
+    }
+    .left-section {
+      width: 45%;
+    }
+    .right-section {
+      width: 45%;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Country Information</h1>
+    <input type="text" id="countryInput" placeholder="Enter country name..." />
+    <button onclick="fetchCountryData()">Submit</button>
+
+    <div class="details">
+      <div class="left-section" id="leftSection"></div>
+      <div class="right-section" id="rightSection"></div>
+    </div>
+  </div>
+
+  <script>
+    function fetchCountryData() {
+      const countryName = document.getElementById('countryInput').value.trim();
+      if (countryName) {
+        const apiUrl = `https://restcountries.com/v3.1/name/${countryName}?fullText=true`;
+
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            const country = data[0];
+            const leftSection = document.getElementById('leftSection');
+            const rightSection = document.getElementById('rightSection');
+
+            leftSection.innerHTML = `
+              <p><strong>Country Name:</strong> ${country.name.common}</p>
+              <p><strong>Flag:</strong> <img src="${country.flags.svg}" alt="Flag of ${country.name.common}" width="100"></p>
+              <p><strong>Flag Info:</strong> ${country.flag}</p>
+              <p><strong>Capital:</strong> ${country.capital[0]}</p>
+              <p><strong>National Language:</strong> ${Object.values(country.languages).join(', ')}</p>
+              <p><strong>Currency:</strong> ${Object.keys(country.currencies)[0]}</p>
+              <p><strong>Region:</strong> ${country.region}</p>
+            `;
+
+            rightSection.innerHTML = `
+              <p><strong>Coat of Arms:</strong></p>
+              <img src="${country.coatOfArms.svg}" alt="Coat of Arms of ${country.name.common}">
+            `;
+          })
+          .catch(error => {
+            alert('Country not found! Please try again.');
+            console.error(error);
+          });
+      } else {
+        alert('Please enter a country name.');
+      }
+    }
+  </script>
+</body>
+</html>
+
